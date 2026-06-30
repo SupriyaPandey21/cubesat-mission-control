@@ -1,8 +1,17 @@
+import dotenv from "dotenv";
+import mongoose from "mongoose";
 import express from "express";
 import path from "path";
 import fs from "fs";
 import { createServer as createViteServer } from "vite";
 import { Satellite, Telemetry, Alert, Command, MissionLog, GroundStation, Settings, User } from "./src/types";
+
+dotenv.config();
+
+mongoose
+  .connect(process.env.MONGO_URI!)
+  .then(() => console.log("✅ MongoDB Connected"))
+  .catch((err) => console.error("❌ MongoDB Error:", err));
 
 // Create data directory for JSON persistence if needed
 const DATA_DIR = path.join(process.cwd(), "data");
