@@ -1,0 +1,119 @@
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&family=Space+Grotesk:wght@500;700&family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap');
+@import "tailwindcss"; 
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, monospace;
+  
+  /* Customized theme variables for Aerospace cockpit */
+  --color-primary: #00dbe7;
+  --color-primary-fixed: #74f5ff;
+  --color-primary-fixed-dim: #00a4b0;
+  --color-on-primary-fixed: #002022;
+  --color-secondary-fixed: #14d1ff;
+  --color-tertiary-fixed: #79ff5b;
+  --color-error: #ffb4ab;
+  --color-surface-container-lowest: #050b0f;
+  --color-surface-container: #0b141a;
+  --color-surface-container-high: #13212b;
+  --color-outline-variant: #283a45;
+  --color-outline: #5c727f;
+}
+
+/* Custom UI Utility Styles */
+.glow-text {
+  text-shadow: 0 0 10px rgba(0, 219, 231, 0.4);
+}
+
+.glow-green {
+  text-shadow: 0 0 10px rgba(121, 255, 91, 0.4);
+}
+
+.glass-card {
+  background: rgba(11, 20, 26, 0.85);
+  border: 1px solid rgba(0, 219, 231, 0.15);
+  backdrop-filter: blur(12px);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.glass-card:hover {
+  border-color: rgba(0, 219, 231, 0.3);
+  box-shadow: 0 8px 32px 0 rgba(0, 219, 231, 0.08);
+}
+
+/* Aerospace CRT radar scanning grid effects */
+.bg-grid-pattern {
+  background-size: 24px 24px;
+  background-image: 
+    linear-gradient(to right, rgba(0, 219, 231, 0.03) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(0, 219, 231, 0.03) 1px, transparent 1px);
+}
+
+/* Animations */
+@keyframes pulse-critical {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+    box-shadow: 0 0 12px #ffb4ab;
+  }
+  50% {
+    opacity: 0.5;
+    transform: scale(0.85);
+    box-shadow: 0 0 4px #ffb4ab;
+  }
+}
+
+.animate-pulse-critical {
+  animation: pulse-critical 1.5s infinite ease-in-out;
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fade-in 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Custom fonts override */
+h1, h2, h3, .font-headline-lg, .font-headline-md, .font-headline-sm {
+  font-family: 'Space Grotesk', sans-serif !important;
+}
+
+.font-data-mono, pre, code {
+  font-family: 'JetBrains Mono', monospace !important;
+}
+
+.font-label-caps {
+  font-family: 'Space Grotesk', sans-serif !important;
+  letter-spacing: 0.1em;
+}
+
+/* Scrollbars styling for technical dashboard */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #050b0f;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #13212b;
+  border-radius: 3px;
+  border: 1px solid rgba(0, 219, 231, 0.1);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #00dbe7;
+}
+

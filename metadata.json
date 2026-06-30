@@ -1,0 +1,6 @@
+{
+  "name": "CubeSat Mission Control",
+  "description": "A high-fidelity dark aerospace mission control dashboard to monitor simulated satellite telemetry, send commands, track ground stations, and manage fleet assets.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
