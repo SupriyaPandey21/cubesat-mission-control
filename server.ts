@@ -3,6 +3,7 @@ import mongoose from "mongoose";
 import express from "express";
 import path from "path";
 import fs from "fs";
+import AlertModel from "./models/Alert";
 import { createServer as createViteServer } from "vite";
 import { Satellite, Telemetry, Alert, Command, MissionLog, GroundStation, Settings, User } from "./src/types";
 
@@ -607,37 +608,49 @@ async function startServer() {
   });
 
   // Alerts endpoints
-  app.get("/api/alerts", (req, res) => {
-    res.json(db.alerts);
-  });
-
-  app.post("/api/alerts", (req, res) => {
-    const alert: Alert = {
+     app.get("/api/alerts", async (req, res) => {
+  try {
+    const alerts = await AlertModel.find().sort({ timestamp: -1 });
+    res.json(alerts);
+  } catch (error) {
+    res.status(500).json({ error: "Failed to fetch alerts" });
+  }
+});
+app.post("/api/alerts", async (req, res) => {
+  try {
+    const alert = await AlertModel.create({
       ...req.body,
       id: `alt-${Date.now()}`,
-      timestamp: new Date().toISOString()
-    };
-    db.alerts.unshift(alert);
-    saveDb();
+      timestamp: new Date().toISOString(),
+    });
+
     res.json({ success: true, alert });
-  });
+  } catch (error) {
+    res.status(500).json({ success: false, error: "Failed to create alert" });
+  }
+});
 
-  app.put("/api/alerts/:id", (req, res) => {
-    const { id } = req.params;
-    const { status, assignedTo } = req.body;
-    const alertIndex = db.alerts.findIndex(a => a.id === id);
+ app.put("/api/alerts/:id", async (req, res) => {
+  const { id } = req.params;
+  const { status, assignedTo } = req.body;
 
-    if (alertIndex !== -1) {
-      db.alerts[alertIndex] = {
-        ...db.alerts[alertIndex],
-        status: status || db.alerts[alertIndex].status,
-        assignedTo: assignedTo || db.alerts[alertIndex].assignedTo
-      };
+  const alert = await AlertModel.findOneAndUpdate(
+    { id },
+    {
+      $set: {
+        ...(status && { status }),
+        ...(assignedTo && { assignedTo }),
+      },
+    },
+    { new: true }
+  );
+
+  if (alert) {
 
       // Create log about alert resolution
       if (status === "RESOLVED") {
-  const satId = db.alerts[alertIndex].satelliteId;
-  const alertCode = db.alerts[alertIndex].code;
+  const satId = alert.satelliteId as string;
+const alertCode = alert.code as string;
 
   const satIndex = db.satellites.findIndex(s => s.id === satId);
 
@@ -659,15 +672,15 @@ async function startServer() {
           satelliteId: satId,
           timestamp: new Date().toISOString(),
           level: "INFO",
-          subsystem: db.alerts[alertIndex].subsystem,
-          message: `Alert resolved: ${db.alerts[alertIndex].code} - ${db.alerts[alertIndex].message}`,
+          subsystem: alert.subsystem || "Unknown",
+          message: `Alert resolved: ${alert.code} - ${alert.message}`,
           payload: JSON.stringify({ resolver: "Chief Engineer", alert_id: id })
         };
         db.missionLogs.unshift(resolveLog);
       }
 
       saveDb();
-      res.json({ success: true, alert: db.alerts[alertIndex] });
+      res.json({ success: true, alert });
     } else {
       res.status(404).json({ success: false, error: "Alert not found" });
     }
