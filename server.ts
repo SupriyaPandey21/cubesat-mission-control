@@ -4,6 +4,8 @@ import express from "express";
 import path from "path";
 import fs from "fs";
 import AlertModel from "./models/Alert";
+import MissionLogModel from "./models/MissionLog";
+import SatelliteModel from "./models/Satellite";
 import { createServer as createViteServer } from "vite";
 import { Satellite, Telemetry, Alert, Command, MissionLog, GroundStation, Settings, User } from "./src/types";
 
@@ -585,16 +587,22 @@ async function startServer() {
   });
 
   // Satellites endpoints
-  app.get("/api/satellites", (req, res) => {
-    res.json(db.satellites);
-  });
-
-  app.post("/api/satellites", (req, res) => {
-    const sat: Satellite = req.body;
-    db.satellites.push(sat);
-    saveDb();
-    res.json({ success: true, satellite: sat });
-  });
+  app.get("/api/satellites", async (req, res) => {
+  try {
+    const satellites = await SatelliteModel.find();
+    res.json(satellites);
+  } catch (error) {
+    res.status(500).json({ error: "Failed to fetch satellites" });
+  }
+});
+app.post("/api/satellites", async (req, res) => {
+  try {
+    const satellite = await SatelliteModel.create(req.body);
+    res.json({ success: true, satellite });
+  } catch (error) {
+    res.status(500).json({ success: false, error: "Failed to create satellite" });
+  }
+});
 
   // Telemetry endpoint
   app.get("/api/telemetry", (req, res) => {
@@ -792,21 +800,28 @@ const alertCode = alert.code as string;
   });
 
   // Mission Logs endpoints
-  app.get("/api/logs", (req, res) => {
-    res.json(db.missionLogs);
-  });
-
-  app.post("/api/logs", (req, res) => {
-    const log: MissionLog = {
+  app.get("/api/logs", async (req, res) => {
+  try {
+    const logs = await MissionLogModel.find().sort({ timestamp: -1 });
+    res.json(logs);
+  } catch (error) {
+    res.status(500).json({ error: "Failed to fetch logs" });
+  }
+});
+  
+  app.post("/api/logs", async (req, res) => {
+  try {
+    const log = await MissionLogModel.create({
       ...req.body,
       id: `log-${Date.now()}`,
-      timestamp: new Date().toISOString()
-    };
-    db.missionLogs.unshift(log);
-    saveDb();
-    res.json({ success: true, log });
-  });
+      timestamp: new Date().toISOString(),
+    });
 
+    res.json({ success: true, log });
+  } catch (error) {
+    res.status(500).json({ success: false, error: "Failed to create log" });
+  }
+});
   // Ground stations endpoint
   app.get("/api/ground_stations", (req, res) => {
     res.json(db.groundStations);
