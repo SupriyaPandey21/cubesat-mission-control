@@ -6,6 +6,9 @@ import fs from "fs";
 import AlertModel from "./models/Alert";
 import MissionLogModel from "./models/MissionLog";
 import SatelliteModel from "./models/Satellite";
+import UserModel from "./models/User";
+import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
 import { createServer as createViteServer } from "vite";
 import { Satellite, Telemetry, Alert, Command, MissionLog, GroundStation, Settings, User } from "./src/types";
 
@@ -571,20 +574,46 @@ async function startServer() {
   // ==========================================
 
   // Auth endpoint
-  app.post("/api/auth/login", (req, res) => {
+ app.post("/api/auth/login", async (req, res) => {
+  try {
     const { username, password } = req.body;
-    // Simple mock authentication for operators
-    const user = db.users[0];
-    if (username === "engineer") {
-      res.json({
-        success: true,
-        token: "mock-jwt-token-ax774",
-        user
-      });
-    } else {
-      res.status(401).json({ success: false, error: "Invalid operator credentials" });
+
+    const user = await UserModel.findOne({ username });
+
+    if (!user) {
+      return res.status(401).json({ success: false, error: "Invalid operator credentials" });
     }
-  });
+
+    const isMatch = await bcrypt.compare(password, user.password || "");
+
+    if (!isMatch) {
+      return res.status(401).json({ success: false, error: "Invalid operator credentials" });
+    }
+
+    const token = jwt.sign(
+   {
+  id: user._id,
+  username: user.username,
+  role: user.role,
+},
+      process.env.JWT_SECRET as string,
+      { expiresIn: "1d" }
+    );
+
+    res.json({
+  success: true,
+  token,
+  user: {
+    id: user._id,
+    username: user.username,
+    name: user.name,
+    role: user.role,
+  },
+});
+  } catch (error) {
+    res.status(500).json({ success: false, error: "Login failed" });
+  }
+});
 
   // Satellites endpoints
   app.get("/api/satellites", async (req, res) => {

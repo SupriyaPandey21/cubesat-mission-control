@@ -182,7 +182,7 @@ export default function TelemetryView({ activeSatId, setActiveSatId }: Telemetry
           <div className="absolute top-4 right-4 w-2 h-2 bg-tertiary-fixed rounded-full shadow-[0_0_5px_#79ff5b] animate-pulse" />
           <div className="flex justify-between items-center mb-3 border-b border-outline-variant/20 pb-2">
             <h3 className="font-label-caps text-xs text-outline tracking-wider">EPS BATTERY STABILITY (%)</h3>
-            <span className="font-data-mono text-base font-bold text-primary-fixed">{activeSat ? activeSat.battery.toFixed(1) : "92.4"}%</span>
+            <span className="font-data-mono text-base font-bold text-primary-fixed">{activeSat ? Number(activeSat?.signal ?? 0).toFixed(1) : "92.4"}%</span>
           </div>
           <div className="flex-1 w-full h-full relative">
             <svg className="w-full h-full" preserveAspectRatio="none" viewBox="0 0 300 120">
@@ -205,7 +205,9 @@ export default function TelemetryView({ activeSatId, setActiveSatId }: Telemetry
           <div className="absolute top-4 right-4 w-2 h-2 bg-tertiary-fixed rounded-full shadow-[0_0_5px_#79ff5b]" />
           <div className="flex justify-between items-center mb-3 border-b border-outline-variant/20 pb-2">
             <h3 className="font-label-caps text-xs text-outline tracking-wider">THERMAL CORE (°C)</h3>
-            <span className="font-data-mono text-base font-bold text-secondary">{activeSat ? activeSat.temp.toFixed(1) : "22.1"}°C</span>
+            <span className="font-data-mono text-base font-bold text-secondary">
+  {Number(activeSat?.temp ?? 22.1).toFixed(1)}°C
+</span>
           </div>
           <div className="flex-1 w-full h-full relative">
             <svg className="w-full h-full" preserveAspectRatio="none" viewBox="0 0 300 120">
@@ -252,7 +254,9 @@ export default function TelemetryView({ activeSatId, setActiveSatId }: Telemetry
         <div className="md:col-span-6 glass-card rounded-lg p-5 flex flex-col h-[240px]">
           <div className="flex justify-between items-center mb-3 border-b border-outline-variant/20 pb-2">
             <h3 className="font-label-caps text-xs text-outline tracking-wider">ALTITUDE PROFILE (km)</h3>
-            <span className="font-data-mono text-base font-bold text-primary-fixed">{activeSat ? activeSat.altitude.toFixed(1) : "525"} km</span>
+            <span className="font-data-mono text-base font-bold text-primary-fixed">
+  {Number(activeSat?.altitude ?? 525).toFixed(1)} km
+</span>
           </div>
           <div className="flex-1 w-full h-full relative">
             <svg className="w-full h-full" preserveAspectRatio="none" viewBox="0 0 400 100">
@@ -270,7 +274,9 @@ export default function TelemetryView({ activeSatId, setActiveSatId }: Telemetry
         <div className="md:col-span-6 glass-card rounded-lg p-5 flex flex-col h-[240px]">
           <div className="flex justify-between items-center mb-3 border-b border-outline-variant/20 pb-2">
             <h3 className="font-label-caps text-xs text-outline tracking-wider">VELOCITY TRACKING (km/s)</h3>
-            <span className="font-data-mono text-base font-bold text-secondary-container">{activeSat ? activeSat.velocity.toFixed(2) : "7.66"} km/s</span>
+           <span className="font-data-mono text-base font-bold text-secondary-container">
+  {Number(activeSat?.velocity ?? 7.66).toFixed(2)} km/s
+</span>
           </div>
           <div className="flex-1 w-full h-full relative">
             <svg className="w-full h-full" preserveAspectRatio="none" viewBox="0 0 400 100">

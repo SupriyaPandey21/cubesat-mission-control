@@ -222,16 +222,20 @@ export default function AlertsView() {
                     <div className="flex justify-between">
                       <span className="text-outline">EPS_BUS_VOLTAGE_SAG</span>
                       <span className={`font-bold ${selectedAlert.level === "CRIT" ? "text-error" : "text-cyan-200"}`}>
-                        {selectedSat ? `${selectedSat.battery.toFixed(1)}%` : "12.0%"}
+                        {selectedSat ? `${Number(selectedSat.battery ?? 0).toFixed(1)}%` : "12.0%"}
                       </span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-outline">THERMAL_CORE_SENSOR</span>
-                      <span className="text-cyan-200">{selectedSat ? `${selectedSat.temp.toFixed(1)}°C` : "45.5°C"}</span>
+                      <span className="text-cyan-200">
+  {selectedSat ? `${Number(selectedSat.temp ?? 45.5).toFixed(1)}°C` : "45.5°C"}
+</span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-outline">COMMS_LINK_DEGRADATION</span>
-                      <span className="text-cyan-200">{selectedSat ? `${selectedSat.signal.toFixed(1)} dBm` : "-115.0 dBm"}</span>
+                     <span className="text-cyan-200">
+  {selectedSat ? `${Number(selectedSat.signal ?? -115).toFixed(1)} dBm` : "-115.0 dBm"}
+</span>
                     </div>
                     <div className="w-full h-px bg-outline-variant/30 my-2" />
                     <div className="flex justify-between font-bold">

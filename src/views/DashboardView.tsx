@@ -56,7 +56,7 @@ export default function DashboardView({ activeSatId, setActiveSatId, onNavigate 
     };
   }, [activeSatId]);
 
-  const activeSat = satellites.find(s => s.id === activeSatId) || satellites[0];
+  const activeSat = satellites.find(s => s.id === activeSatId) || satellites[0] || null;
 
   const handlePing = async () => {
     if (!activeSat) return;
@@ -102,8 +102,13 @@ export default function DashboardView({ activeSatId, setActiveSatId, onNavigate 
   // Live positions relative coordinates mapping for visual SVG map
   // Lat: -90 to 90 -> mapping to Y: 40 to 360
   // Lon: -180 to 180 -> mapping to X: 40 to 760
-  const mapX = activeSat ? ((activeSat.longitude + 180) / 360) * 720 + 40 : 400;
-  const mapY = activeSat ? ((90 - activeSat.latitude) / 180) * 320 + 40 : 200;
+  const mapX = activeSat
+  ? (((activeSat.longitude ?? 0) + 180) / 360) * 720 + 40
+  : 400;
+
+const mapY = activeSat
+  ? ((90 - (activeSat.latitude ?? 0)) / 180) * 320 + 40
+  : 200;
 
   // AI Anomaly risk score calculation based on payload state
   let riskScore = 12;
@@ -304,9 +309,9 @@ export default function DashboardView({ activeSatId, setActiveSatId, onNavigate 
 
               {/* Coordinates HUD Overlay */}
               <div className="absolute bottom-4 right-4 bg-surface-container-highest/90 backdrop-blur-md border border-primary/20 p-3 rounded font-data-mono text-[11px] flex gap-4 text-outline z-20 shadow-md">
-                <div><span className="text-primary-fixed">LAT:</span> {activeSat ? activeSat.latitude.toFixed(2) : "45.23"}° N</div>
-                <div><span className="text-primary-fixed">LON:</span> {activeSat ? activeSat.longitude.toFixed(2) : "12.87"}° E</div>
-                <div><span className="text-primary-fixed">VEL:</span> {activeSat ? activeSat.velocity.toFixed(2) : "7.66"} km/s</div>
+                <div><span className="text-primary-fixed">LAT:</span> {activeSat ? Number(activeSat.latitude ?? 45.23).toFixed(2) : "45.23"}° N</div>
+              <div><span className="text-primary-fixed">LON:</span> {activeSat ? Number(activeSat.longitude ?? 12.87).toFixed(2) : "12.87"}° E</div>
+              <div><span className="text-primary-fixed">VEL:</span> {activeSat ? Number(activeSat.velocity ?? 7.66).toFixed(2) : "7.66"} km/s</div>
               </div>
             </div>
 
@@ -322,7 +327,7 @@ export default function DashboardView({ activeSatId, setActiveSatId, onNavigate 
                 <span className="material-symbols-outlined text-outline text-lg">speed</span>
               </div>
               <div className="font-headline-md text-2xl text-primary font-data-mono drop-shadow-[0_0_10px_rgba(0,219,231,0.2)] mt-1">
-                {activeSat ? activeSat.velocity.toFixed(2) : "7.66"}
+                {activeSat ? Number(activeSat.velocity ?? 7.66).toFixed(2) : "7.66"}
               </div>
               <div className="h-10 w-full mt-2">
                 <svg className="w-full h-full" preserveAspectRatio="none" viewBox="0 0 200 60">
@@ -343,7 +348,9 @@ export default function DashboardView({ activeSatId, setActiveSatId, onNavigate 
                 <span className="material-symbols-outlined text-outline text-lg">bolt</span>
               </div>
               <div className="font-headline-md text-2xl text-primary font-data-mono drop-shadow-[0_0_10px_rgba(0,219,231,0.2)] mt-1">
-                {activeSat ? parseFloat((14.2 + (activeSat.temp % 3) * 0.5).toFixed(1)) : "14.2"} W
+                {activeSat
+  ? parseFloat((14.2 + ((activeSat.temp ?? 25) % 3) * 0.5).toFixed(1))
+  : "14.2"} W
               </div>
               <div className="h-10 w-full mt-2">
                 <svg className="w-full h-full" preserveAspectRatio="none" viewBox="0 0 200 60">

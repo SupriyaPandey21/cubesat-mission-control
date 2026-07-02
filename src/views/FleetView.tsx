@@ -188,11 +188,15 @@ export default function FleetView({ activeSatId, setActiveSatId }: FleetViewProp
                   <div className="flex justify-between items-center mt-3 text-xs font-data-mono text-outline">
                     <div className="flex items-center gap-1">
                       <span className="material-symbols-outlined text-sm">battery_charging_full</span>
-                      <span className="font-bold text-cyan-200-variant">{sat.battery.toFixed(1)}%</span>
+                     <span className="font-bold text-cyan-200-variant">
+  {Number(sat.battery ?? 0).toFixed(1)}%
+</span>
                     </div>
                     <div className="flex items-center gap-1">
                       <span className="material-symbols-outlined text-sm">device_thermostat</span>
-                      <span className="font-bold text-cyan-200-variant">{sat.temp.toFixed(1)}°C</span>
+                     <span className="font-bold text-cyan-200-variant">
+  {Number(sat.temp ?? 45.5).toFixed(1)}°C
+</span>
                     </div>
                   </div>
                 </div>
@@ -237,11 +241,15 @@ export default function FleetView({ activeSatId, setActiveSatId }: FleetViewProp
               <div className="flex flex-col gap-3.5 font-data-mono text-xs">
                 <div className="bg-surface-container/30 border border-outline-variant/20 rounded p-2.5 flex justify-between items-center">
                   <span className="text-outline">THERMAL DEGREE</span>
-                  <span className="text-primary-fixed font-bold">{satA ? satA.temp.toFixed(1) : "22.1"}°C</span>
+                 <span className="text-primary-fixed font-bold">
+  {Number(satA?.temp ?? 22.1).toFixed(1)}°C
+</span>
                 </div>
                 <div className="bg-surface-container/30 border border-outline-variant/20 rounded p-2.5 flex justify-between items-center">
                   <span className="text-outline">POWER CHARGE</span>
-                  <span className="text-primary-fixed font-bold">{satA ? satA.battery.toFixed(1) : "92.4"}%</span>
+                  <span className="text-primary-fixed font-bold">
+  {satA ? satA.battery.toFixed(1) : "92.4"}%
+</span>
                 </div>
                 <div className="bg-surface-container/30 border border-outline-variant/20 rounded p-2.5 flex justify-between items-center">
                   <span className="text-outline">ATTITUDE</span>
@@ -255,11 +263,15 @@ export default function FleetView({ activeSatId, setActiveSatId }: FleetViewProp
               <div className="flex flex-col gap-3.5 font-data-mono text-xs">
                 <div className="bg-surface-container/30 border border-outline-variant/20 rounded p-2.5 flex justify-between items-center">
                   <span className="text-outline">THERMAL DEGREE</span>
-                  <span className="text-cyan-200 font-bold">{satB ? satB.temp.toFixed(1) : "18.5"}°C</span>
+                  <span className="text-cyan-200 font-bold">
+  {satB ? Number(satB.temp ?? 18.5).toFixed(1) : "18.5"}°C
+</span>
                 </div>
                 <div className="bg-surface-container/30 border border-outline-variant/20 rounded p-2.5 flex justify-between items-center">
                   <span className="text-outline">POWER CHARGE</span>
-                  <span className="text-cyan-200 font-bold">{satB ? satB.battery.toFixed(1) : "76.0"}%</span>
+                  <span className="text-cyan-200 font-bold">
+  {satB ? Number(satB.battery ?? 76.0).toFixed(1) : "76.0"}%
+</span>
                 </div>
                 <div className="bg-surface-container/30 border border-outline-variant/20 rounded p-2.5 flex justify-between items-center">
                   <span className="text-outline">ATTITUDE</span>
