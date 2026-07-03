@@ -12,10 +12,18 @@ import TanyaAiView from "./views/TanyaAiView";
 import SettingsView from "./views/SettingsView";
 
 export default function App() {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [selectedUser, setSelectedUser] = useState("LIPZX");
-  const [password, setPassword] = useState("");
-  const [loginError, setLoginError] = useState("");
+ const [isLoggedIn, setIsLoggedIn] = useState(false);
+const [selectedUser, setSelectedUser] = useState("LIPZX");
+const [password, setPassword] = useState("");
+const [loginError, setLoginError] = useState("");
+
+useEffect(() => {
+  const token = localStorage.getItem("token");
+
+  if (token) {
+    setIsLoggedIn(true);
+  }
+}, []);
   
   const [activeSatId, setActiveSatId] = useState("aether-1");
   const [currentTab, setCurrentTab] = useState("dashboard");
@@ -61,24 +69,44 @@ export default function App() {
     playSound(1000, "sine", 0.05);
   };
 
-  const handleLogin = (e: React.FormEvent) => {
-    e.preventDefault();
-    // Support password gate or allow custom bypass for Developer
-    if (password === "1234" || password === "developer" || password.trim() !== "") {
+  const handleLogin = async (e: React.FormEvent) => {
+  e.preventDefault();
+
+  try {
+    const response = await fetch("/api/auth/login", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        username: "engineer",
+        password,
+      }),
+    });
+
+    const data = await response.json();
+
+    if (data.success) {
+      localStorage.setItem("token", data.token);
       playSound(1200, "triangle", 0.15);
       setIsLoggedIn(true);
       setLoginError("");
     } else {
       playSound(300, "sine", 0.25);
-      setLoginError("INVALID HANDSHAKE ACCESS SIGNATURE");
+      setLoginError("INVALID OPERATOR CREDENTIALS");
     }
-  };
+  } catch (error) {
+    setLoginError("SERVER CONNECTION FAILED");
+  }
+};
 
   const handleLogout = () => {
-    playSound(400, "sine", 0.1);
-    setIsLoggedIn(false);
-    setPassword("");
-  };
+  playSound(400, "sine", 0.1);
+  localStorage.removeItem("token");
+  setIsLoggedIn(false);
+  setPassword("");
+  setLoginError("");
+};
 
   const tabs = [
     { id: "dashboard", label: "Dashboard Hub", icon: "dashboard" },
