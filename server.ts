@@ -570,23 +570,21 @@ async function startServer() {
   app.use(express.json());
 
   app.get("/api/seed-user", async (req, res) => {
-    const existingUser = await UserModel.findOne({ username: "engineer" });
+  const hashedPassword = await bcrypt.hash("password123", 10);
 
-    if (existingUser) {
-      return res.json({ message: "User already exists" });
-    }
-
-    const hashedPassword = await bcrypt.hash("password123", 10);
-
-    await UserModel.create({
+  await UserModel.findOneAndUpdate(
+    { username: "engineer" },
+    {
       username: "engineer",
       password: hashedPassword,
       name: "Mission Engineer",
       role: "ADMIN",
-    });
+    },
+    { upsert: true, new: true }
+  );
 
-    res.json({ message: "User created successfully" });
-  });
+  res.json({ message: "User password reset successfully" });
+});
 
   // ==========================================
   // API ENDPOINTS
