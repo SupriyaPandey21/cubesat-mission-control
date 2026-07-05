@@ -569,6 +569,25 @@ async function startServer() {
 
   app.use(express.json());
 
+  app.get("/api/seed-user", async (req, res) => {
+    const existingUser = await UserModel.findOne({ username: "engineer" });
+
+    if (existingUser) {
+      return res.json({ message: "User already exists" });
+    }
+
+    const hashedPassword = await bcrypt.hash("password123", 10);
+
+    await UserModel.create({
+      username: "engineer",
+      password: hashedPassword,
+      name: "Mission Engineer",
+      role: "ADMIN",
+    });
+
+    res.json({ message: "User created successfully" });
+  });
+
   // ==========================================
   // API ENDPOINTS
   // ==========================================
@@ -892,13 +911,13 @@ const alertCode = alert.code as string;
     });
   } else {
     const vite = await createViteServer({
-      server: { middlewareMode: true,
-        watch: {
-      ignored: ["**/data/**"]
-       }
-      },
-      appType: "spa",
-    });
+  server: { middlewareMode: true,
+    watch: {
+  ignored: ["**/data/**"]
+   }
+  },
+  appType: "spa",
+});
     app.use(vite.middlewares);
   }
 
@@ -906,5 +925,4 @@ const alertCode = alert.code as string;
     console.log(`Server successfully started. Running on port ${PORT}`);
   });
 }
-
 startServer();
