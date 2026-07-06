@@ -583,7 +583,7 @@ async function startServer() {
     { upsert: true, new: true }
   );
 
-  res.json({ message: "User password reset successfully" });
+  res.json({ message: "Engineer password reset successfully" });
 });
 
   // ==========================================
