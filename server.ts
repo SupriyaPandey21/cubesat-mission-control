@@ -597,15 +597,19 @@ async function startServer() {
 
     const user = await UserModel.findOne({ username });
 
-    if (!user) {
-      return res.status(401).json({ success: false, error: "Invalid operator credentials" });
-    }
+console.log("LOGIN USER:", user);
 
-    const isMatch = await bcrypt.compare(password, user.password || "");
+if (!user) {
+  return res.status(401).json({ success: false, error: "Invalid operator credentials" });
+}
 
-    if (!isMatch) {
-      return res.status(401).json({ success: false, error: "Invalid operator credentials" });
-    }
+const isMatch = await bcrypt.compare(password, user.password || "");
+
+console.log("PASSWORD MATCH:", isMatch);
+
+if (!isMatch) {
+  return res.status(401).json({ success: false, error: "Invalid operator credentials" });
+}
 
     const token = jwt.sign(
    {
