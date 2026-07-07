@@ -597,40 +597,42 @@ async function startServer() {
 
     const user = await UserModel.findOne({ username });
 
-console.log("LOGIN USER:", user);
+    if (!user) {
+      return res.status(401).json({
+        success: false,
+        error: "Invalid operator credentials",
+      });
+    }
 
-if (!user) {
-  return res.status(401).json({ success: false, error: "Invalid operator credentials" });
-}
+    const isMatch = await bcrypt.compare(password, user.password || "");
 
-const isMatch = await bcrypt.compare(password, user.password || "");
-
-console.log("PASSWORD MATCH:", isMatch);
-
-if (!isMatch) {
-  return res.status(401).json({ success: false, error: "Invalid operator credentials" });
-}
+    if (!isMatch) {
+      return res.status(401).json({
+        success: false,
+        error: "Invalid operator credentials",
+      });
+    }
 
     const token = jwt.sign(
-   {
-  id: user._id,
-  username: user.username,
-  role: user.role,
-},
+      {
+        id: user._id,
+        username: user.username,
+        role: user.role,
+      },
       process.env.JWT_SECRET as string,
       { expiresIn: "1d" }
     );
 
     res.json({
-  success: true,
-  token,
-  user: {
-    id: user._id,
-    username: user.username,
-    name: user.name,
-    role: user.role,
-  },
-});
+      success: true,
+      token,
+      user: {
+        id: user._id,
+        username: user.username,
+        name: user.name,
+        role: user.role,
+      },
+    });
   } catch (error) {
     res.status(500).json({ success: false, error: "Login failed" });
   }
