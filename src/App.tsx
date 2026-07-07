@@ -85,7 +85,6 @@ useEffect(() => {
     });
 
     const data = await response.json();
-console.log("LOGIN RESPONSE:", data); 
 
     if (data.success) {
       localStorage.setItem("token", data.token);

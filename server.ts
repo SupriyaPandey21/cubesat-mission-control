@@ -568,24 +568,6 @@ async function startServer() {
   const PORT = process.env.PORT || 3000;
 
   app.use(express.json());
-
-  app.get("/api/seed-user", async (req, res) => {
-  const hashedPassword = await bcrypt.hash("password123", 10);
-
-  await UserModel.findOneAndUpdate(
-    { username: "engineer" },
-    {
-      username: "engineer",
-      password: hashedPassword,
-      name: "Mission Engineer",
-      role: "ADMIN",
-    },
-    { upsert: true, new: true }
-  );
-
-  res.json({ message: "Engineer password reset successfully" });
-});
-
   // ==========================================
   // API ENDPOINTS
   // ==========================================
